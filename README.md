@@ -1,2 +1,5 @@
 # fsml
-finite state machine language parser.
+
+A really simple domain-specific language for describing Finite State Machines, written in rust.
+
+See [the example](assets/simple-state-machine.fsml) 
