@@ -1,0 +1,12 @@
+machine SimpleStateMachine;
+
+state Off "the machine is turned off";
+state Booting "the machine is initialising";
+state LoginScreen "awaiting user login";
+state LoggingIn;
+state SteadyState;
+state LoggingOut;
+
+Off -> Booting -> LoginScreen -> LoggingIn -> SteadyState -> LoggingOut -> LoginScreen -> Off;
+LoginScreen -> PasswordLockout -> LoginScreen;
+
