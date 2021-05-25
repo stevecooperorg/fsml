@@ -9,6 +9,9 @@ state Terminating;
 state Deleted;
 
 Unscheduled -> AwaitingSchedule -> Scheduled -> Ready -> Terminating -> Deleted;
-CrashLoopBackoff -> Terminating;
+Scheduled -> CrashLoopBackoff -> Terminating;
 CrashLoopBackoff -> Ready;
+AwaitingSchedule -> Terminating;
+Unscheduled -> Terminating ;
+
 

@@ -3,6 +3,7 @@ use pom::char_class::{alpha, alphanum, multispace};
 use pom::parser::*;
 use std::str::FromStr;
 use std::collections::HashMap;
+use std::fmt::{Display, Formatter};
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct StateMachine {
@@ -20,7 +21,25 @@ pub struct StateId(String);
 #[derive(Debug, Clone, PartialEq)]
 pub struct State {
     pub id: StateId,
+    pub is_starting_state: bool,
     pub description: Option<String>
+}
+
+impl AcceptState {
+    pub fn source(&self) -> &StateId {
+        &self.0
+    }
+
+    pub fn target(&self) -> &StateId {
+        &self.1
+    }
+}
+
+
+impl Display for StateId {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        f.write_str(&self.0)
+    }
 }
 
 /// space, tab, etc
@@ -132,12 +151,19 @@ fn state<'a>() -> Parser<'a, u8, State> {
 
     raw.map(move |(identifier, description)| State {
         id: StateId(identifier),
+        is_starting_state: false,
         description
     })
 }
 
 fn state_list<'a>() -> Parser<'a, u8, Vec<State>> {
-    state().repeat(0..)
+    fn tag_starting_state(idx: usize, state: State) -> State {
+        State {
+            is_starting_state: idx == 0,
+            ..state
+        }
+    };
+    state().repeat(0..).map(|states| states.into_iter().enumerate().map(|(idx, state)| tag_starting_state(idx, state)).collect())
 }
 
 fn accept_states_list<'a>() -> Parser<'a, u8, Vec<AcceptState>> {
@@ -290,10 +316,12 @@ bar -> baz;
                 states: vec![
                     State {
                         id: StateId("bar".into()),
+                        is_starting_state: true,
                         description: Some("it's a bar thing".into())
                     },
                     State {
                         id: StateId("baz".into()),
+                        is_starting_state: false,
                         description: None
                     },
                 ],

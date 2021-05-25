@@ -1,1 +1,23 @@
-@plantuml
+@startuml
+
+state Unscheduled
+state AwaitingSchedule
+state Scheduled
+state Ready
+state CrashLoopBackoff
+state Terminating
+state Deleted
+
+[*] -> Unscheduled
+Unscheduled -> AwaitingSchedule
+AwaitingSchedule -> Scheduled
+Scheduled -> Ready
+Ready -> Terminating
+Terminating -> Deleted
+Scheduled -> CrashLoopBackoff
+CrashLoopBackoff -> Terminating
+CrashLoopBackoff -> Ready
+AwaitingSchedule -> Terminating
+Unscheduled -> Terminating
+
+@enduml
