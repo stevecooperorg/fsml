@@ -166,7 +166,7 @@ fn accept_states_chain<'a>() -> Parser<'a, u8, Vec<AcceptState>> {
     })
 }
 
-fn state_machine<'a>() -> Parser<'a, u8, StateMachine> {
+pub fn state_machine<'a>() -> Parser<'a, u8, StateMachine> {
 
     let header = keyword(b"machine") * identifier() - semi();
     let raw = header
@@ -314,7 +314,7 @@ bar -> baz;
 
     #[test]
     fn line_counter_works() {
-        let file_path_str = "assets/simple-state-machine.fsml";
+        let file_path_str = "assets/fsml/simple-state-machine.fsml";
         let byte_vec: Vec<u8> = std::fs::read(file_path_str).unwrap();
         let actual = count_lines(&byte_vec);
         assert_eq!(12, actual);
@@ -322,13 +322,13 @@ bar -> baz;
 
     #[test]
     fn parse_state_machine_file() {
-        let file_path_str = "assets/simple-state-machine.fsml";
+        let file_path_str = "assets/fsml/simple-state-machine.fsml";
         assert_parse_file(PathBuf::from_str(file_path_str).unwrap().as_path());
     }
 
     #[test]
     fn parse_all_files() -> Result<()> {
-        let mut entries = fs::read_dir("assets")?
+        let mut entries = fs::read_dir("assets/fsml")?
             .map(|res| res.map(|e| e.path()))
             //.filter(|f| )
             .collect::<std::result::Result<Vec<_>, io::Error>>()?;

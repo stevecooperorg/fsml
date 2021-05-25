@@ -1,0 +1,14 @@
+machine Pod;
+
+state Unscheduled "the pod has not been created in the cluster";
+state AwaitingSchedule;
+state Scheduled;
+state Ready;
+state CrashLoopBackoff;
+state Terminating;
+state Deleted;
+
+Unscheduled -> AwaitingSchedule -> Scheduled -> Ready -> Terminating -> Deleted;
+CrashLoopBackoff -> Terminating;
+CrashLoopBackoff -> Ready;
+
